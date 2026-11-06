@@ -1,13 +1,12 @@
 import "dotenv/config";
 import { embedMany } from "ai";
-import { createVoyage } from "@ai-sdk/voyage";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
 
 import { chunkKnowledgeDocuments } from "./chunk-documents";
 import { vectorStore, INDEX_NAME, EMBEDDING_DIMENSIONS } from "./vector-store";
+import { EMBEDDING_MODEL, formatDocument } from "./embedding-config";
 
-const voyage = createVoyage({
-  apiKey: process.env.VOYAGE_API_KEY,
-});
+const google = createGoogleGenerativeAI();
 
 async function main() {
   // 1. Prepare the chunks.
@@ -15,8 +14,11 @@ async function main() {
 
   // 2. Generate embeddings using Voyage.
   const { embeddings } = await embedMany({
-    model: voyage.embedding("voyage-4-large"),
-    values: chunks.map((chunk) => chunk.text),
+    model: google.embedding(EMBEDDING_MODEL),
+    values: chunks.map((chunk) =>
+      formatDocument(chunk.text, chunk.metadata.title),
+    ),
+    dimensions: EMBEDDING_DIMENSIONS,
   });
 
   // 3. Verify that every vector has the expected dimensions.

@@ -1,16 +1,16 @@
 import "dotenv/config";
-import { createVoyage } from "@ai-sdk/voyage";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { embed } from "ai";
-import { INDEX_NAME, vectorStore } from "./vector-store";
+import { EMBEDDING_DIMENSIONS, INDEX_NAME, vectorStore } from "./vector-store";
+import { EMBEDDING_MODEL, formatQuery } from "./embedding-config";
 
-const voyage = createVoyage({
-  apiKey: process.env.VOYAGE_API_KEY,
-});
+const google = createGoogleGenerativeAI();
 
 export async function retrieveRelevantChunks(question: string) {
   const { embedding } = await embed({
-    model: voyage.embedding("voyage-4-large"),
-    value: question,
+    model: google.embedding(EMBEDDING_MODEL),
+    value: formatQuery(question),
+    dimensions: EMBEDDING_DIMENSIONS,
   });
 
   const results = await vectorStore.query({

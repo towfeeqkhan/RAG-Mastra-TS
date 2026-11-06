@@ -12,6 +12,7 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@ai-sdk/google": "^4.0.112",
     "@ai-sdk/openai": "^4.0.108",
     "@ai-sdk/voyage": "^2.0.74",
     "@mastra/core": "^1.81.0",
